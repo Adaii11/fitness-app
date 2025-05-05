@@ -1,40 +1,46 @@
 'use client'
+import Link from "next/link"
 
-import { usePathname } from "next/navigation";
-import Link from 'next/link'
+import { usePathname } from "next/navigation"
+
 
 export default function auth({children}: {children: React.ReactNode}) {
-
     const pathname = usePathname();
 
-
     return (
-        <div className="flex min-h-screen min-w-screen bg-gradient-to-t from-sky-800 to-black">
-            <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-8">
-                <div className="w-1/2 max-w-md flex">
-                    <img className="mr-auto ml-auto mb-20" src="/optimal-logo.svg" alt="app-name-logo"/>
-                </div>
-                <div className="w-1/2 max-w-md p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md">
-                    {children}
-                </div>
-                <div className="mt-2 flex flex-row w-1/2 max-w-md justify-between">
-                    { pathname === "/auth/login" ? (
-                        <>
-                            <Link href="/auth/forgot-pw">Forgot Password?</Link>
-                            <Link href="/auth/register">Create Account</Link>
-                        </>
-                    ) : pathname === '/auth/register' ? (
-                        <>
-                            <Link href="/auth/forgot-pw">Forgot Password?</Link>
-                            <Link href="/auth/login">Login</Link>
-                        </>
-                    ) :
-                    null}
-                </div>
+        <div className="min-h-screen bg-gradient-to-br from-primary via-tertiary3 to-secondary flex flex-col items-center justify-center">
+            <div className="w-[18rem] sm:w-[20rem] md:w-[24rem] lg:w-[28rem] xl:w-[32rem] h-auto">
+                <img 
+                    src='/peak-logo.svg'
+                    alt="Logo"
+                    width={1024}
+                    height="auto"
+                />
             </div>
+            <div className="w-[22rem] sm:w-[24rem] md:w-[26rem] lg:w-[28rem] xl:w-[30rem] 2xl:w-[32rem] h-auto bg-gray-700 mb-[0.5rem] rounded-lg px-4">
+                <h4 className="text-center mt-[1rem] mb-[1rem] font-bold text-[1.5rem] leading-snug sm:leading-tight sm:text-[1.875rem] pl-8 pr-8">Climb The Steps To Better Health</h4>
+                {children}
+            </div>
+            {pathname === '/auth/login' ? (
+                <>
+                <div>
+                    <Link href="/auth/password-recovery" className="hover:text-primaryHover">Forgot Password?</Link>
+                </div>
+                </>
+            ) : pathname === '/auth/password-recovery' ? (
+                <>
+                <div>
+                    <Link href="/auth/login" className="hover:text-primaryHover">Back To Login</Link>
+                </div>
+                </>
+            ) : pathname === '/auth/create-account' ? (
+                <>
+                <div>
+                    <Link href='/auth/login' className="hover:text-primaryHover">Back To Login</Link>
+                </div>
+                </>
+            ) : null}
             
-            <div className="w-1/2 max-w hidden md:block p-6 bg-[url('/images/background-photo.jpg')] bg-cover bg-center">
-            </div>
         </div>
     )
 
