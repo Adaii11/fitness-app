@@ -3,16 +3,20 @@
 import { Formik, Form, Field, ErrorMessage} from 'formik';
 import * as Yup from 'yup';
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 
 
 
 
 export default function LoginPage() {
+    const router = useRouter();
 
     const validationSchema = Yup.object({
         email: Yup.string().email('Wrong email').required('Email is required'),
         password: Yup.string().required('password is required')
     });
+
+    
 
     return (
         <Formik
@@ -21,11 +25,37 @@ export default function LoginPage() {
                 password: '',
             }}
             validationSchema={validationSchema}
-            onSubmit={(values) => {
-                console.log("Login submit: ", values); 
+            onSubmit={async (values, {setSubmitting }) => {
+                
+
+                try {
+                    const response = await fetch('http://localhost:5000/api/login', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(values),
+                    });
+
+                    const result = await response.json();
+                    if(!response.ok) throw new Error(result.error || 'Login failed');
+
+                    localStorage.setItem("token", result.token);
+
+                    if (!result.token) {
+                        console.log("token generation failed");
+                    } else {
+                        router.push('/dashboard/home');
+                    }
+
+                } catch(err) {
+                    console.error("Login failed:", err);
+                    alert("Invalid credentials. Please try again")
+                }
             }}
         >
-            {({ handleBlur , values}) => (
+            {({ handleSubmit, validateForm, setTouched, handleBlur , values}) => (
+   
                 <Form className="flex flex-col items-center justify-center gap-[0.5rem]">
                     <InputField label="Email" name="email" type="email" />
                     <InputField label="Password" name="password" type="password" />

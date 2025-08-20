@@ -1,11 +1,20 @@
 'use client'
-import Link from "next/link"
 
+
+import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from 'react';
+
 
 
 export default function auth({children}: {children: React.ReactNode}) {
     const pathname = usePathname();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-primary via-tertiary3 to-secondary flex flex-col items-center justify-center">
@@ -21,25 +30,35 @@ export default function auth({children}: {children: React.ReactNode}) {
                 <h4 className="text-center mt-[1rem] mb-[1rem] font-bold text-[1.5rem] leading-snug sm:leading-tight sm:text-[1.875rem] pl-8 pr-8">Climb The Steps To Better Health</h4>
                 {children}
             </div>
-            {pathname === '/auth/login' ? (
+
+            {mounted && (
                 <>
-                <div>
-                    <Link href="/auth/password-recovery" className="hover:text-primaryHover">Forgot Password?</Link>
-                </div>
-                </>
-            ) : pathname === '/auth/password-recovery' ? (
+                {pathname === '/auth/login' ? (
                 <>
-                <div>
-                    <Link href="/auth/login" className="hover:text-primaryHover">Back To Login</Link>
-                </div>
+                    <div>
+                        <Link href="/auth/password-recovery" className="hover:text-primaryHover">Forgot Password?</Link>
+                    </div>
+                    </>
+                    ) : pathname === '/auth/password-recovery' ? (
+                    <>
+                    <div>
+                        <Link href="/auth/login" className="hover:text-primaryHover">Back To Login</Link>
+                    </div>
+                    </>
+                    ) : pathname === '/auth/create-account' ? (
+                    <>
+                    <div>
+                        <Link href='/auth/login' className="hover:text-primaryHover">Back To Login</Link>
+                    </div>
                 </>
-            ) : pathname === '/auth/create-account' ? (
-                <>
-                <div>
-                    <Link href='/auth/login' className="hover:text-primaryHover">Back To Login</Link>
-                </div>
+                ) : null}
+                
                 </>
-            ) : null}
+            )}
+
+
+
+            
             
         </div>
     )

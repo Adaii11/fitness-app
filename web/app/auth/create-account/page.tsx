@@ -1,13 +1,16 @@
 'use client';
-
+import { useRouter } from 'next/navigation';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
 import {motion, AnimatePresence } from "framer-motion";
+import next from 'next';
 
 export default function CreateAccount () {
     const [step, setStep] = useState(1);
     const totalSteps = 3; //number of steps in the form
+    const router = useRouter()
+
 
     const validationSchemas = [
         Yup.object({
@@ -19,7 +22,7 @@ export default function CreateAccount () {
                 .matches(/[0-9]/, 'Must contain an number')
                 .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Must contain a special character'),
             confirmPassword: Yup.string()
-                .oneOf([Yup.ref('password'), ''], 'Passwords must match')
+                .oneOf([Yup.ref('password')], 'Passwords must match')
                 .required('Please confirm your password'),
         }),
         Yup.object({
@@ -42,7 +45,7 @@ export default function CreateAccount () {
         for (let inches = 0; inches <= 11; inches++) {
             const totalInches = feet * 12 + inches;
             if (totalInches > 58 && totalInches <= 84) {
-                options.push(`${feet}' ${inches}`)
+                options.push(`${feet}'${inches}`)
             }
         }
     }
@@ -72,7 +75,7 @@ export default function CreateAccount () {
             onSubmit={(values) => {
             console.log("Final submit:", values);
         }}>
-            {({ handleSubmit, validateForm, setTouched, touched}) => {
+            {({ handleSubmit, validateForm, setTouched, touched, values}) => {
                 const handleNext = async () => {
                     const errors = await validateForm();
                     const fields = Object.keys(validationSchemas[step - 1].fields);
@@ -117,8 +120,35 @@ export default function CreateAccount () {
                         setTouched(touchedFields);
                         return;
                     }
-                
-                    handleSubmit(); // manually call Formik's submit
+
+                    //submit form data
+                    try {
+                        const response = await fetch('http://localhost:5000/api/create-account', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(values),
+                        });
+
+                        const result = await response.json();
+                        if (!response.ok) throw new Error(result.message);
+
+                        console.log('Account created:', result);
+
+                        localStorage.setItem("token", result.token);
+
+                        if (!result.token) {
+                            console.log("token generation failed")
+                        } else {
+                            router.push('/dashboard/home');
+                        }
+
+                    } catch (err) {
+                        console.log('submission failed:', err);
+                    }
+
+                    handleSubmit();
                 };
 
                 return (
@@ -180,13 +210,13 @@ export default function CreateAccount () {
                                 className="w-full"
                                 >
                                 <div className="flex gap-[1rem]">
-                                    <InputField label="Weight" name="weight" type="number" />
-                                    <SelectField label="Height" name="height" options={heightOptions} />
+                                    <InputField label="Weight" name="weight" type="number" customLabel='Weight (lbs)'/>
+                                    <SelectField label="Height" name="height" options={heightOptions}/>
                                 </div>
                                 <SelectField
                                     label="Goal"
                                     name="goal"
-                                    options={['2lb cut', '1lb cut', 'maintainance', '1lb bulk', '2lb bulk']}
+                                    options={['- 2lbs per week | Cutting', '- 1lb per week | Cutting', 'Maintainance', '+ 1lb per week | Bulking', '+ 2lbs per week | Bulking']}
                                 />
                                 </motion.div>
                             )}
@@ -250,17 +280,19 @@ export default function CreateAccount () {
 const InputField = ({ 
     label, 
     name, 
-    type= "text"
+    type= "text",
+    customLabel
 }: {
     label: string;
     name: string;
     type?: string;
+    customLabel?: string
 }) => (
     <Field name={name}>
         {({ field, meta} : any) => {
             return (
                 <div className="w-full ">
-                    <p className="ml-[0.5rem] mb-[0.25rem] text-[1.375rem] font-light">{label}</p>
+                    <p className="ml-[0.5rem] mb-[0.25rem] text-[1.375rem] font-light">{customLabel ? customLabel : label}</p>
                     <input
                         {...field} 
                         type={type}
