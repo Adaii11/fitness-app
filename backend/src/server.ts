@@ -1,9 +1,98 @@
+import express, { Application } from 'express';
+import authRoutes from './routes/authRoutes';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+// Load environmental variables here and call express.js
+dotenv.config();
+const app: Application = express();
+
+// Middleware
+app.use(cors({origin: 'http://localhost:3000'}));
+app.use(express.json());
+
+// Routes
+app.use('/api', authRoutes);
+
+
+//Error Handling
+app.use((err: any, req: any, res: any, next: any) => {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error'});
+})
+
+
+// Shows server is running on port 5000 within our terminal
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//old version below
+/*
+
 import express, { Request, Response } from "express";
 import cors from 'cors';
 import bcrypt from 'bcrypt';
 import { ZodError } from 'zod';
 import { PrismaClient } from "@prisma/client";
-import { registerSchema } from "./schemas/userSchema";
+import { registerSchema } from "../schemas/userSchema";
 import jwt from 'jsonwebtoken';
 
 const app = express();
@@ -12,7 +101,6 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors({origin: 'http://localhost:3000'}));
 app.use(express.json());
-
 
 //create-acocunt endpoint
 app.post('/api/create-account', async (req: Request, res: Response) => {
@@ -151,3 +239,5 @@ app.post('/api/login', async (req: Request, res: Response) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 })
+
+*/

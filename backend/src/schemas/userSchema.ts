@@ -28,3 +28,14 @@ export const registerSchema = z.object({
         });
     }
 })
+
+export const loginSchema = z.object({
+    email: z.string().email('Invalid email').min(1, 'Email is required'),
+    password: z.string()
+        .min(8, 'Password must be at least 8 characters')
+        .regex(/[a-z]/, 'Must contain a lowercase letter')
+        .regex(/[A-Z]/, 'Must contain an uppercase letter')
+        .regex(/[0-9]/, 'Must contain a number')
+        .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Must contain a special character')
+        .min(1, 'Password is required'), 
+})

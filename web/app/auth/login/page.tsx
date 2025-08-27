@@ -37,14 +37,10 @@ export default function LoginPage() {
                         body: JSON.stringify(values),
                     });
 
-                    const result = await response.json();
-                    if(!response.ok) throw new Error(result.error || 'Login failed');
-
-                    localStorage.setItem("token", result.token);
-
-                    if (!result.token) {
-                        console.log("token generation failed");
-                    } else {
+                    const data = await response.json();
+                    console.log(data);
+                    
+                    if(data.token) {
                         router.push('/dashboard/home');
                     }
 
