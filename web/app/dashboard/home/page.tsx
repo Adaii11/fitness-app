@@ -15,6 +15,17 @@ export default function home() {
         { label: 'Fat', value: 55, goal: 70, color: '#ec4899' },       // pink-500
     ];
 
+    const token = localStorage.getItem('token'); // wherever you stored it
+
+    fetch('http://localhost:5000/dashboard/home', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => console.log(data))
+      .catch(err => console.error(err));
 
     
     return (

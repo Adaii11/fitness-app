@@ -19,7 +19,7 @@ export async function registerUser (
         const token = jwt.sign(
             {id: user.id, email: user.email},
             process.env.JWT_SECRET || 'supersecretkey',
-            { expiresIn: '1hr'}
+            { expiresIn: '1h'}
         )
 
         const { password, ...userWithoutPassword } = user;
@@ -27,7 +27,7 @@ export async function registerUser (
         res.status(201).json({
             message: 'User created successfully',
             token,
-            user,
+            user: userWithoutPassword,
         });
     } catch(err) {
         
@@ -35,6 +35,8 @@ export async function registerUser (
             res
                 .status(400)
                 .json({ message: 'Validation failed', issues: err.errors })
+            
+                return;
         }
 
         console.error('Error in registerUser: ', err);

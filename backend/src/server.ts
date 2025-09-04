@@ -1,11 +1,17 @@
+/// <reference path='types.d.ts' />
+
 import express, { Application } from 'express';
 import authRoutes from './routes/authRoutes';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import dashboardRoutes from './routes/dashboardRoutes';
+
 
 // Load environmental variables here and call express.js
 dotenv.config();
 const app: Application = express();
+
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
 // Middleware
 app.use(cors({origin: 'http://localhost:3000'}));
@@ -13,6 +19,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api', authRoutes);
+app.use('/dashboard', dashboardRoutes);
 
 
 //Error Handling
