@@ -14,8 +14,7 @@ export default function home() {
         { label: 'Carbs', value: 180, goal: 250, color: 'secondary' },  // yellow-400
         { label: 'Fat', value: 55, goal: 70, color: '#ec4899' },       // pink-500
     ];
-
-    const token = localStorage.getItem('token'); // wherever you stored it
+    const token = 'PASTE_YOUR_JWT_HERE'
 
     fetch('http://localhost:5000/dashboard/home', {
       method: 'GET',

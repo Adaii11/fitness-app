@@ -1,13 +1,41 @@
 'use client'
 
 import Link from 'next/link';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
+import { useRouter } from 'next/navigation';
 import {Menu, X, User} from 'lucide-react';
+import { getToken } from '@/app/utils/auth';
 
 
 export default function dashboard({children}: {children: React.ReactNode}) {
-
+    
     const [menuOpen, setMenuOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+
+    useEffect(() => {
+        const token = getToken();
+
+        if(!token) {
+            router.replace('/auth/login');
+            return;
+        } 
+
+        try {
+            setLoading(false);
+        } catch(err) {
+            router.replace('/auth/login');
+        }
+
+    }, [router]);
+
+    if(loading) {
+        return (
+            <div className="w-full min-h-screen flex items-center justify-center text-white text-lg">
+                Checking Autorization...
+            </div>
+        )
+    }
 
     return (
 

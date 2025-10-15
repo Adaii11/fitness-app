@@ -41,6 +41,7 @@ export default function LoginPage() {
                     console.log(data);
                     
                     if(data.token) {
+                        localStorage.setItem("token", JSON.stringify(data.user));
                         router.push('/dashboard/home');
                     }
 
